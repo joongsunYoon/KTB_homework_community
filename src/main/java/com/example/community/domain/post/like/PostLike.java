@@ -9,24 +9,17 @@ import java.sql.Timestamp;
 
 
 @Entity
-@Table(
-        name = "post_like",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"post_id", "user_id"})
-        }
-)
+@Table(name = "post_like")
+@IdClass(PostLikeId.class)
 @Getter
 @NoArgsConstructor
 public class PostLike {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_like_id")
-    private Integer postLikeId;
-
     @Column(name = "post_id", nullable = false)
     private Integer postId;
 
+    @Id
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 

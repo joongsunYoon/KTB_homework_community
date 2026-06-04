@@ -29,8 +29,7 @@ public class Post {
     @Column(nullable = false)
     private String title;
 
-    @Lob // LONGTEXT 매핑
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
     @Column(name = "post_image_url")
