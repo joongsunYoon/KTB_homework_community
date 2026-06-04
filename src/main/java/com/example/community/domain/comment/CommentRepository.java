@@ -1,0 +1,16 @@
+package com.example.community.domain.comment;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.util.List;
+import java.util.Map;
+
+public interface CommentRepository extends JpaRepository<Comment, Integer> {
+
+    @Query("SELECT c.commentId as commentId, c.content as content, u.nickname as nickname, " +
+            "u.profileImageUrl as profileImage, c.createdAt as createdAt, c.updatedAt as updatedAt " +
+            "FROM Comment c, User u WHERE c.userId = u.userId AND c.postId = :postId ORDER BY c.commentId ASC")
+    List<Map<String, Object>> findAllByPostId(@Param("postId") int postId);
+    long countByCommentId(int postId);
+}
