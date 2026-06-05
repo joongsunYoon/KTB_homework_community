@@ -26,15 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String uri = request.getRequestURI();
-        if (uri.equals("/api/auth") || uri.equals("/api/users/create")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         try {
             String token = jwtProvider.extractTokenFromRequest(request);
-
             int userId = jwtProvider.validateToken(token);
 
             var authentication = new UsernamePasswordAuthenticationToken(userId, null, List.of());
