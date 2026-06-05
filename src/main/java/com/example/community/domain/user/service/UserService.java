@@ -27,6 +27,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
     }
 
+    // todo: 비밀번호를 plain text로 저장하고 있음. papper + salt 형식으로 수정해야함.
     @Transactional
     public void create(CreateRequestDto dto) {
         if (!dto.password().equals(dto.passwordCheck())) throw new IllegalArgumentException("invalid_request");

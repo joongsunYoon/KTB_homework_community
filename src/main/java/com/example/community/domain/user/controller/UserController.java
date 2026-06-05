@@ -33,7 +33,6 @@ public class UserController {
             @PathVariable int userId,
             HttpServletRequest request
     ) {
-
         Map<String, Object> response = new HashMap<>();
         String token = jwtProvider.extractTokenFromRequest(request);
         Integer userIdByToken = jwtProvider.validateToken(token);
