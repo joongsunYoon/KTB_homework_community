@@ -17,16 +17,16 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private Integer commentId;
+    private Long commentId;
 
     @Column(name = "post_id", nullable = false)
-    private Integer postId;
+    private Long postId;
 
     @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "parent_comment_id")
-    private Integer parentCommentId;
+    private Long parentCommentId;
 
     @Column(nullable = false, length = 1000)
     private String content;
@@ -40,7 +40,7 @@ public class Comment {
     private Timestamp updatedAt;
 
     @Builder
-    public Comment(Integer postId, Integer userId, Integer parentCommentId, String content) {
+    public Comment(Long postId, Long userId, Long parentCommentId, String content) {
         this.postId = postId;
         this.userId = userId;
         this.parentCommentId = parentCommentId;

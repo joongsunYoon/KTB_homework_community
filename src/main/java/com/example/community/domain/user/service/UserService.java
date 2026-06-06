@@ -22,7 +22,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User findById(int userId) {
+    public User findById(long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
     }
@@ -49,7 +49,7 @@ public class UserService {
     }
 
     @Transactional
-    public void update(int userId, String nickname, String passwordCheck) {
+    public void update(long userId, String nickname, String passwordCheck) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
@@ -57,14 +57,14 @@ public class UserService {
     }
 
     @Transactional
-    public void remove(int userId) {
+    public void remove(long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
         userRepository.delete(user);
     }
 
     @Transactional
-    public void createOrUpdateProfileImage(int userId, MultipartFile file) {
+    public void createOrUpdateProfileImage(long userId, MultipartFile file) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
         try {
@@ -82,7 +82,7 @@ public class UserService {
     }
 
     @Transactional
-    public void removeProfileImage(int userId) {
+    public void removeProfileImage(long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
         user.updateProfileImage(null);

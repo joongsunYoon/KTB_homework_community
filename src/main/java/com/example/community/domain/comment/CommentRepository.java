@@ -6,11 +6,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Map;
 
-public interface CommentRepository extends JpaRepository<Comment, Integer> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c.commentId as commentId, c.content as content, u.nickname as nickname, " +
             "u.profileImageUrl as profileImage, c.createdAt as createdAt, c.updatedAt as updatedAt " +
             "FROM Comment c, User u WHERE c.userId = u.userId AND c.postId = :postId ORDER BY c.commentId ASC")
-    List<Map<String, Object>> findAllByPostId(@Param("postId") int postId);
-    long countByCommentId(int postId);
+    List<Map<String, Object>> findAllByPostId(@Param("postId") long postId);
+    long countByCommentId(long postId);
 }

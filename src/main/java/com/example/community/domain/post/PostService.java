@@ -44,9 +44,9 @@ public class PostService {
     }
 
     @Transactional
-    public void createPost(String title, String content, int userId) {
+    public void createPost(String title, String content, long userId) {
         Post post = Post.builder()
-                .categoryId(1) // 카테고리까지는 무리여서 일단 그냥 1로 더미데이터로 생성
+                .categoryId(1L) // 카테고리까지는 무리여서 일단 그냥 1로 더미데이터로 생성
                 .userId(userId)
                 .title(title)
                 .content(content)
@@ -69,12 +69,10 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponse getPostDetail(int postId) {
+    public PostResponse getPostDetail(Long postId) {
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
-
-        post.incrementViewCount();
 
         User user = userRepository.findById(post.getUserId())
                 .orElseThrow(() -> new NotFoundException("작성자 정보를 찾을 수 없습니다.", null));
@@ -86,7 +84,7 @@ public class PostService {
     }
 
     @Transactional
-    public void update(int postId, String title, String content, int loginUserId) {
+    public void update(long postId, String title, String content, long loginUserId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
 
@@ -96,7 +94,7 @@ public class PostService {
     }
 
     @Transactional
-    public void remove(int postId, int loginUserId) {
+    public void remove(long postId, long loginUserId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
 
@@ -106,7 +104,7 @@ public class PostService {
     }
 
     @Transactional
-    public void uploadPostImage(int postId, MultipartFile file) {
+    public void uploadPostImage(long postId, MultipartFile file) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
         try {

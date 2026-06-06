@@ -14,7 +14,7 @@ public class PostLikeService {
     }
 
     @Transactional
-    public void addLike(int postId, int userId) {
+    public void addLike(long postId, long userId) {
         if (postLikeRepository.existsByPostIdAndUserId(postId, userId)) {
             throw new IllegalArgumentException("invalid_request");
         }
@@ -28,7 +28,7 @@ public class PostLikeService {
     }
 
     @Transactional
-    public void removeLike(int postId, int userId) {
+    public void removeLike(long postId, long userId) {
         PostLike postLike = postLikeRepository.findByPostIdAndUserId(postId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
 

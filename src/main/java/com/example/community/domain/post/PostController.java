@@ -41,7 +41,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> getDetail(@PathVariable int postId) {
+    public ResponseEntity<PostResponse> getDetail(@PathVariable long postId) {
         PostResponse response = postService.getPostDetail(postId);
         return ResponseEntity.ok(response);
     }
@@ -53,7 +53,7 @@ public class PostController {
     ) {
         Map<String, Object> response = new HashMap<>();
         String token = jwtProvider.extractTokenFromRequest(request);
-        Integer userId = jwtProvider.validateToken(token);
+        Long userId = jwtProvider.validateToken(token);
 
         postService.createPost(body.get("title"), body.get("content"), userId);
 
@@ -70,7 +70,7 @@ public class PostController {
     ) {
 
         String token = jwtProvider.extractTokenFromRequest(request);
-        Integer userId = jwtProvider.validateToken(token);
+        Long userId = jwtProvider.validateToken(token);
 
         Map<String, Object> response = new HashMap<>();
         postService.update(postId, body.get("title"), body.get("content"), userId);
@@ -87,7 +87,7 @@ public class PostController {
     ) {
 
         String token = jwtProvider.extractTokenFromRequest(request);
-        Integer userId = jwtProvider.validateToken(token);
+        Long userId = jwtProvider.validateToken(token);
         postService.remove(postId, userId);
 
         return ResponseEntity.noContent().build();

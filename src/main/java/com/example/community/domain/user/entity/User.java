@@ -17,7 +17,7 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @Column(nullable = false, unique = true, length = 63)
     private String email;
@@ -40,7 +40,7 @@ public class User{
     private Timestamp updatedAt;
 
     @Builder
-    public User(Integer userId, String email, String passwordHash, String nickname, String profileImageUrl) {
+    public User(Long userId, String email, String passwordHash, String nickname, String profileImageUrl) {
         this.userId = userId;
         this.email = email;
         this.passwordHash = passwordHash;

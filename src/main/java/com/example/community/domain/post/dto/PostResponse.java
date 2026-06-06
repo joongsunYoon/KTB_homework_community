@@ -6,15 +6,15 @@ import com.example.community.domain.user.entity.User;
 import java.text.SimpleDateFormat;
 
 public record PostResponse(
-        Integer postId,
+        Long postId,
         String title,
         String content,
         String image,
         String nickname,
         String profileImage,
-        Long likeCount,
-        Integer viewCount,
-        Long commentCount,
+        long likeCount,
+        long viewCount,
+        long commentCount,
         String createdAt,
         String updatedAt
 ) {

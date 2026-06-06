@@ -5,7 +5,7 @@ import com.example.community.domain.post.Post;
 import com.example.community.domain.user.entity.User;
 
 public record PostListResponse(
-        Integer postId,
+        Long postId,
         String title,
         String image,
         String nickname,

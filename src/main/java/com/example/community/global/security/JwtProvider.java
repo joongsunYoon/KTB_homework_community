@@ -50,7 +50,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public Integer validateToken(String token) {
+    public Long validateToken(String token) {
         try {
             Claims claims = Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
@@ -58,7 +58,7 @@ public class JwtProvider {
                     .parseSignedClaims(token)
                     .getPayload();
 
-            return Integer.parseInt(claims.getSubject());
+            return Long.parseLong(claims.getSubject());
         } catch (Exception e) {
             throw new RuntimeException("토큰이 유효하지 않습니다.");
         }

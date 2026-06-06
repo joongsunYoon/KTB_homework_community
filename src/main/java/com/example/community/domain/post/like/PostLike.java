@@ -17,18 +17,18 @@ public class PostLike {
 
     @Id
     @Column(name = "post_id", nullable = false)
-    private Integer postId;
+    private Long postId;
 
     @Id
     @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    private Long userId;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
     @Builder
-    public PostLike(Integer postId, Integer userId) {
+    public PostLike(Long postId, Long userId) {
         this.postId = postId;
         this.userId = userId;
     }

@@ -18,7 +18,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void createComment(int postId, int userId, String content) {
+    public void createComment(long postId, long userId, String content) {
         Comment comment = Comment.builder()
                 .postId(postId)
                 .userId(userId)
@@ -27,12 +27,12 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public List<Map<String, Object>> getCommentsByPost(int postId) {
+    public List<Map<String, Object>> getCommentsByPost(long postId) {
         return commentRepository.findAllByPostId(postId);
     }
 
     @Transactional
-    public void updateComment(int commentId, String content, int loginUserId) {
+    public void updateComment(long commentId, String content, long loginUserId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
 
@@ -42,7 +42,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void removeComment(int commentId, int loginUserId) {
+    public void removeComment(long commentId, long loginUserId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
 

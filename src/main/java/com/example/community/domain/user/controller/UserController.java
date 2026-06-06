@@ -35,7 +35,7 @@ public class UserController {
     ) {
         Map<String, Object> response = new HashMap<>();
         String token = jwtProvider.extractTokenFromRequest(request);
-        Integer userIdByToken = jwtProvider.validateToken(token);
+        Long userIdByToken = jwtProvider.validateToken(token);
 
         if (userIdByToken != userId) {
             response.put("message", "사용자 권한이 없습니다.");
@@ -68,7 +68,7 @@ public class UserController {
     ) {
         Map<String, Object> response = new HashMap<>();
         String token = jwtProvider.extractTokenFromRequest(request);
-        Integer userIdByToken = jwtProvider.validateToken(token);
+        Long userIdByToken = jwtProvider.validateToken(token);
 
         if (userIdByToken != userId) {
             response.put("message", "사용자 권한이 없습니다.");
@@ -88,7 +88,7 @@ public class UserController {
             HttpServletRequest request
     ) {
         String token = jwtProvider.extractTokenFromRequest(request);
-        Integer userIdByToken = jwtProvider.validateToken(token);
+        Long userIdByToken = jwtProvider.validateToken(token);
 
         if (userIdByToken != userId) {
             throw new ForbiddenException("사용자 권한이 없습니다.", null);

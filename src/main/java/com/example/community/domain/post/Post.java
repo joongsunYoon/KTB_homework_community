@@ -18,25 +18,22 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private Integer postId;
+    private Long postId;
 
     @Column(name = "category_id", nullable = false)
-    private Integer categoryId;
+    private Long categoryId;
 
     @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    private Long userId;
 
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "post_image_url")
     private String postImageUrl;
-
-    @Column(name = "view_count")
-    private int viewCount = 0;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -47,13 +44,12 @@ public class Post {
     private Timestamp updatedAt;
 
     @Builder
-    public Post(Integer categoryId, Integer userId, String title, String content, String postImageUrl) {
+    public Post(Long categoryId, Long userId, String title, String content, String postImageUrl) {
         this.categoryId = categoryId;
         this.userId = userId;
         this.title = title;
         this.content = content;
         this.postImageUrl = postImageUrl;
-        this.viewCount = 0;
     }
 
     public void update(String title, String content) {
@@ -62,10 +58,6 @@ public class Post {
         }
         this.title = title;
         this.content = content;
-    }
-
-    public void incrementViewCount() {
-        this.viewCount++;
     }
 
     public void updatePostImageUrl(String postImageUrl) {

@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class PostLikeId implements Serializable {
-    private Integer postId;
-    private Integer userId;
+    private Long postId;
+    private Long userId;
 }

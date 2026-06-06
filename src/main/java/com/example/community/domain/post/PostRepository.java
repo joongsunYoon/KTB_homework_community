@@ -7,9 +7,9 @@ import org.springframework.data.repository.query.Param;
 import java.awt.print.Pageable;
 import java.util.List;
 
-public interface PostRepository extends JpaRepository<Post, Integer> {
+public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p WHERE p.postId < :cursor ORDER BY p.postId DESC")
     List<Post> findTopPostsByCursor(@Param("cursor") int cursor, Pageable pageable);
 
-    long countByPostId(int postId);
+    long countByPostId(Long postId);
 }

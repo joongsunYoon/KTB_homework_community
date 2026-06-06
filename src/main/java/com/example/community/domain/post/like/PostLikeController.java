@@ -27,7 +27,7 @@ public class PostLikeController {
             HttpServletRequest request
     ) {
         String token = jwtProvider.extractTokenFromRequest(request);
-        Integer loginUserId = jwtProvider.validateToken(token);
+        Long loginUserId = jwtProvider.validateToken(token);
 
         postLikeService.addLike(postId, loginUserId);
 
@@ -40,11 +40,11 @@ public class PostLikeController {
 
     @DeleteMapping
     public ResponseEntity<Void> removeLike(
-            @PathVariable int postId,
+            @PathVariable long postId,
             HttpServletRequest request
     ) {
         String token = jwtProvider.extractTokenFromRequest(request);
-        Integer loginUserId = jwtProvider.validateToken(token);
+        Long loginUserId = jwtProvider.validateToken(token);
 
         postLikeService.removeLike(postId, loginUserId);
 
