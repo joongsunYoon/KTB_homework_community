@@ -1,6 +1,8 @@
 package com.example.community.domain.post.dto;
 
 import com.example.community.domain.post.Post;
+import com.example.community.domain.post.info.PostInfo;
+import com.example.community.domain.post.info.PostInfoResponse;
 import com.example.community.domain.user.entity.User;
 
 import java.text.SimpleDateFormat;
@@ -12,14 +14,12 @@ public record PostResponse(
         String image,
         String nickname,
         String profileImage,
-        long likeCount,
-        long viewCount,
-        long commentCount,
+        PostInfoResponse postInfoResponse,
         String createdAt,
         String updatedAt
 ) {
-    public static PostResponse from(Post post, User user, long likeCount, long commentCount) {
-        SimpleDateFormat sdf = new SimpleDateFormat("Y-m-d H:m:s");
+    public static PostResponse from(Post post, User user , PostInfo postInfo) {
+        SimpleDateFormat sdf = new SimpleDateFormat("y-M-d H:m:s");
 
         return new PostResponse(
                 post.getPostId(),
@@ -28,9 +28,7 @@ public record PostResponse(
                 post.getPostImageUrl() != null ? post.getPostImageUrl() : "image-server/post/image",
                 user.getNickname(),
                 user.getProfileImageUrl(),
-                likeCount,
-                post.getViewCount(),
-                commentCount,
+                PostInfoResponse.from(postInfo),
                 post.getCreatedAt() != null ? sdf.format(post.getCreatedAt()) : null,
                 post.getUpdatedAt() != null ? sdf.format(post.getUpdatedAt()) : null
         );

@@ -1,4 +1,6 @@
 package com.example.community.domain.post.info;
 
-public class PostInfoRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PostInfoRepository extends JpaRepository<PostInfo, Long> {
 }

@@ -3,6 +3,8 @@ package com.example.community.domain.post;
 import com.example.community.domain.comment.CommentRepository;
 import com.example.community.domain.post.dto.PostListResponse;
 import com.example.community.domain.post.dto.PostResponse;
+import com.example.community.domain.post.info.PostInfo;
+import com.example.community.domain.post.info.PostInfoRepository;
 import com.example.community.domain.post.like.PostLikeRepository;
 import com.example.community.domain.user.entity.User;
 import com.example.community.domain.user.repository.UserRepository;
@@ -28,19 +30,18 @@ public class PostService {
     private final String POST_UPLOAD_DIR = System.getProperty("user.dir") + "/upload-posts/";
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final PostLikeRepository postLikeRepository;
-    private final CommentRepository commentRepository;
+    private final PostInfoRepository postInfoRepository;
 
     public PostService(
             PostRepository postRepository,
             UserRepository userRepository,
             PostLikeRepository postLikeRepository,
-            CommentRepository commentRepository
+            CommentRepository commentRepository,
+            PostInfoRepository postInfoRepository
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
-        this.postLikeRepository = postLikeRepository;
-        this.commentRepository = commentRepository;
+        this.postInfoRepository = postInfoRepository;
     }
 
     @Transactional
@@ -55,6 +56,9 @@ public class PostService {
                 .title(title)
                 .content(content)
                 .build();
+
+        PostInfo postInfo = new PostInfo(post);
+        postInfoRepository.save(postInfo);
         postRepository.save(post);
     }
 
@@ -71,18 +75,19 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    // Post + PostInfo
+    // todo: postInfo 조회수 증가 로직 비동기화 해야함.
     public PostResponse getPostDetail(Long postId) {
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
+                .orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다.", null));
 
         User user = post.getUser();
+        PostInfo postInfo = post.getPostInfo();
+        postInfo.increaseViewCount();
+        postInfoRepository.save(postInfo);
 
-        long likeCount = postLikeRepository.countByPostId(postId);
-        long commentCount = commentRepository.countByCommentId(postId);
-
-        return PostResponse.from(post, user, likeCount, commentCount);
+        return PostResponse.from(post, user, postInfo);
     }
 
     @Transactional
@@ -95,13 +100,13 @@ public class PostService {
         post.update(title, content);
     }
 
+    //Post + PostInfo
     @Transactional
     public void remove(long postId, long loginUserId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
 
         if (!post.getUser().getUserId().equals(loginUserId)) throw new ForbiddenException("사용자 권한이 없습니다.", null);
-
         postRepository.delete(post);
     }
 
