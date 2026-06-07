@@ -77,6 +77,7 @@ public class PostService {
 
     // Post + PostInfo
     // todo: postInfo 조회수 증가 로직 비동기화 해야함.
+    @Transactional
     public PostResponse getPostDetail(Long postId) {
 
         Post post = postRepository.findById(postId)
