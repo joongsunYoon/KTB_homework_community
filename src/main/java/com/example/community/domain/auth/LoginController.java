@@ -1,10 +1,9 @@
 package com.example.community.domain.auth;
 
-import com.example.community.global.security.JwtProvider;
 import com.example.community.domain.user.entity.User;
 import com.example.community.domain.user.service.UserService;
+import com.example.community.global.security.JwtProvider;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -57,15 +56,12 @@ public class LoginController {
 
     @DeleteMapping
     public ResponseEntity<Void> logout(
-            HttpServletRequest httpRequest,
             HttpServletResponse httpResponse
     ) {
 
-        String token = jwtProvider.extractTokenFromRequest(httpRequest);
-        jwtProvider.validateToken(token);
-
         Cookie killCookie = new Cookie("refresh_token", null);
         killCookie.setHttpOnly(true);
+        killCookie.setSecure(true);
         killCookie.setPath("/");
         killCookie.setMaxAge(0);
         httpResponse.addCookie(killCookie);

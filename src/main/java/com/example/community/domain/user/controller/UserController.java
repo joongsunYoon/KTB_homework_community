@@ -8,6 +8,7 @@ import com.example.community.global.exception.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,26 +19,21 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final JwtProvider jwtProvider;
 
     public UserController(
-            UserService userService,
-            JwtProvider jwtProvider
+            UserService userService
     ) {
         this.userService = userService;
-        this.jwtProvider = jwtProvider;
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<Map<String, Object>> search(
             @PathVariable int userId,
-            HttpServletRequest request
+            @AuthenticationPrincipal Long loginUserId
     ) {
         Map<String, Object> response = new HashMap<>();
-        String token = jwtProvider.extractTokenFromRequest(request);
-        Long userIdByToken = jwtProvider.validateToken(token);
 
-        if (userIdByToken != userId) {
+        if (loginUserId != userId) {
             response.put("message", "사용자 권한이 없습니다.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
@@ -64,13 +60,11 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> update(
             @PathVariable int userId,
             @RequestBody Map<String, String> body,
-            HttpServletRequest request
+            @AuthenticationPrincipal Long loginUserId
     ) {
         Map<String, Object> response = new HashMap<>();
-        String token = jwtProvider.extractTokenFromRequest(request);
-        Long userIdByToken = jwtProvider.validateToken(token);
 
-        if (userIdByToken != userId) {
+        if (loginUserId != userId) {
             response.put("message", "사용자 권한이 없습니다.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
@@ -85,12 +79,10 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public ResponseEntity<Map<String, Object>> delete(
             @PathVariable int userId,
-            HttpServletRequest request
+            @AuthenticationPrincipal Long loginUserId
     ) {
-        String token = jwtProvider.extractTokenFromRequest(request);
-        Long userIdByToken = jwtProvider.validateToken(token);
 
-        if (userIdByToken != userId) {
+        if (loginUserId != userId) {
             throw new ForbiddenException("사용자 권한이 없습니다.", null);
         }
 

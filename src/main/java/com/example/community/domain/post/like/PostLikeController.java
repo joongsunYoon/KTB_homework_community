@@ -1,9 +1,8 @@
 package com.example.community.domain.post.like;
 
-import com.example.community.global.security.JwtProvider;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -14,22 +13,17 @@ import java.util.Map;
 public class PostLikeController {
 
     private final PostLikeService postLikeService;
-    private final JwtProvider jwtProvider;
 
-    public PostLikeController(PostLikeService postLikeService, JwtProvider jwtProvider) {
+    public PostLikeController(PostLikeService postLikeService) {
         this.postLikeService = postLikeService;
-        this.jwtProvider = jwtProvider;
     }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> addLike(
             @PathVariable int postId,
-            HttpServletRequest request
+            @AuthenticationPrincipal Long userId
     ) {
-        String token = jwtProvider.extractTokenFromRequest(request);
-        Long loginUserId = jwtProvider.validateToken(token);
-
-        postLikeService.addLike(postId, loginUserId);
+        postLikeService.addLike(postId, userId);
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "like_success");
@@ -41,12 +35,9 @@ public class PostLikeController {
     @DeleteMapping
     public ResponseEntity<Void> removeLike(
             @PathVariable long postId,
-            HttpServletRequest request
+            @AuthenticationPrincipal Long userId
     ) {
-        String token = jwtProvider.extractTokenFromRequest(request);
-        Long loginUserId = jwtProvider.validateToken(token);
-
-        postLikeService.removeLike(postId, loginUserId);
+        postLikeService.removeLike(postId, userId);
 
         return ResponseEntity.noContent().build();
     }

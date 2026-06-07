@@ -6,6 +6,7 @@ import com.example.community.domain.post.dto.PostResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,14 +18,10 @@ import java.util.Map;
 public class PostController {
 
     private final PostService postService;
-    private final JwtProvider jwtProvider;
-
     public PostController(
-            PostService postService,
-            JwtProvider jwtProvider
+            PostService postService
     ) {
         this.postService = postService;
-        this.jwtProvider = jwtProvider;
     }
 
     @GetMapping
@@ -49,12 +46,9 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(
             @RequestBody Map<String, String> body,
-            HttpServletRequest request
+            @AuthenticationPrincipal Long userId
     ) {
         Map<String, Object> response = new HashMap<>();
-        String token = jwtProvider.extractTokenFromRequest(request);
-        Long userId = jwtProvider.validateToken(token);
-
         PostResponse postResponse = postService.createPost(body.get("title"), body.get("content"), userId);
 
         response.put("message", "post_created");
@@ -66,11 +60,8 @@ public class PostController {
     public ResponseEntity<Map<String, Object>> update(
             @PathVariable int postId,
             @RequestBody Map<String, String> body,
-            HttpServletRequest request
+            @AuthenticationPrincipal Long userId
     ) {
-
-        String token = jwtProvider.extractTokenFromRequest(request);
-        Long userId = jwtProvider.validateToken(token);
 
         Map<String, Object> response = new HashMap<>();
         postService.update(postId, body.get("title"), body.get("content"), userId);
@@ -83,11 +74,8 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> delete(
             @PathVariable int postId,
-            HttpServletRequest request
+            @AuthenticationPrincipal Long userId
     ) {
-
-        String token = jwtProvider.extractTokenFromRequest(request);
-        Long userId = jwtProvider.validateToken(token);
         postService.remove(postId, userId);
 
         return ResponseEntity.noContent().build();

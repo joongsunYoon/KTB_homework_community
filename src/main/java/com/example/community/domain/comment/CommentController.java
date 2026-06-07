@@ -1,10 +1,8 @@
 package com.example.community.domain.comment;
 
-import com.example.community.domain.user.entity.User;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -35,13 +33,14 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createComment(@PathVariable int postId,
-                                                             @RequestBody Map<String, String> body,
-                                                             HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> createComment(
+            @PathVariable int postId,
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal Long userId
+    ) {
         Map<String, Object> response = new HashMap<>();
-        User loginUser = getLoginUserOrThrow(request);
 
-        commentService.createComment(postId, loginUser.getUserId(), body.get("content"));
+        commentService.createComment(postId, userId, body.get("content"));
 
         response.put("message", "comment_created");
         response.put("data", null);
@@ -49,14 +48,15 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<Map<String, Object>> updateComment(@PathVariable int postId,
-                                                             @PathVariable int commentId,
-                                                             @RequestBody Map<String, String> body,
-                                                             HttpServletRequest request) {
-        Map<String, Object> response = new HashMap<>();
-        User loginUser = getLoginUserOrThrow(request);
+    public ResponseEntity<Map<String, Object>> updateComment(
+            @PathVariable int postId,
+            @PathVariable int commentId,
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal Long userId
+    ) {
 
-        commentService.updateComment(commentId, body.get("content"), loginUser.getUserId());
+        Map<String, Object> response = new HashMap<>();
+        commentService.updateComment(commentId, body.get("content"), userId);
 
         response.put("message", "comment_updated");
         response.put("data", null);
@@ -64,24 +64,17 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Map<String, Object>> deleteComment(@PathVariable int postId,
-                                                             @PathVariable int commentId,
-                                                             HttpServletRequest request) {
-        Map<String, Object> response = new HashMap<>();
-        User loginUser = getLoginUserOrThrow(request);
+    public ResponseEntity<Map<String, Object>> deleteComment(
+            @PathVariable int postId,
+            @PathVariable int commentId,
+            @AuthenticationPrincipal Long userId
+    ) {
 
-        commentService.removeComment(commentId, loginUser.getUserId());
+        Map<String, Object> response = new HashMap<>();
+        commentService.removeComment(commentId, userId);
 
         response.put("message", "comment_deleted");
         response.put("data", null);
         return ResponseEntity.ok(response);
-    }
-
-    private User getLoginUserOrThrow(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("LOGIN_USER") == null) {
-            throw new IllegalArgumentException("로그인이 되어있지 않습니다. 로그인을 해주세요");
-        }
-        return (User) session.getAttribute("LOGIN_USER");
     }
 }
