@@ -19,17 +19,17 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Column(name = "comment_id", columnDefinition = "INT UNSIGNED")
     private Long commentId;
 
-    @Column(name = "post_id", nullable = false)
+    @Column(name = "post_id", nullable = false, columnDefinition = "INT UNSIGNED")
     private Long postId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "parent_comment_id")
+    @Column(name = "parent_comment_id", columnDefinition = "INT UNSIGNED")
     private Long parentCommentId;
 
     @Column(nullable = false, length = 1000)

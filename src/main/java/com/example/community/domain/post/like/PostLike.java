@@ -19,13 +19,21 @@ import java.sql.Timestamp;
 public class PostLike {
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    @Column(name = "post_id", columnDefinition = "INT UNSIGNED")
+    private Long postId;
 
     @Id
+    @Column(name = "user_id", columnDefinition = "INT UNSIGNED")
+    private Long userId;
+
+    @MapsId("postId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "post_id", insertable = false, updatable = false, columnDefinition = "INT UNSIGNED")
+    private Post post;
+
+    @MapsId("userId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false, columnDefinition = "INT UNSIGNED")
     private User user;
 
     @CreationTimestamp

@@ -19,17 +19,17 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "post_id", columnDefinition = "INT UNSIGNED")
     private Long postId;
 
-    @Column(name = "category_id", nullable = false)
+    @Column(name = "category_id", nullable = false, columnDefinition = "INT UNSIGNED")
     private Long categoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE)
     private PostInfo postInfo;
 
     @Column(nullable = false)

@@ -16,10 +16,10 @@ public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "INT UNSIGNED")
     private Long userId;
 
-    @Column(nullable = false, unique = true, length = 63)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(name = "password_hash", nullable = false)
