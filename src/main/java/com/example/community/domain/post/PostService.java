@@ -98,6 +98,7 @@ public class PostService {
         if (!post.getUser().getUserId().equals(loginUserId)) throw new ForbiddenException("사용자 권한이 없습니다.", null);
 
         post.update(title, content);
+        postRepository.save(post);
     }
 
     //Post + PostInfo
