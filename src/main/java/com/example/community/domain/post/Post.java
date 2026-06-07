@@ -1,13 +1,15 @@
 package com.example.community.domain.post;
 
+import com.example.community.domain.post.info.PostInfo;
+import com.example.community.domain.user.entity.User;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
-import java.sql.Timestamp;
-
-import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "post")
@@ -23,8 +25,12 @@ public class Post {
     @Column(name = "category_id", nullable = false)
     private Long categoryId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
+    private PostInfo postInfo;
 
     @Column(nullable = false)
     private String title;
@@ -44,9 +50,9 @@ public class Post {
     private Timestamp updatedAt;
 
     @Builder
-    public Post(Long categoryId, Long userId, String title, String content, String postImageUrl) {
+    public Post(Long categoryId, User user, String title, String content, String postImageUrl) {
         this.categoryId = categoryId;
-        this.userId = userId;
+        this.user  = user;
         this.title = title;
         this.content = content;
         this.postImageUrl = postImageUrl;

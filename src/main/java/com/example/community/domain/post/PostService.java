@@ -45,9 +45,13 @@ public class PostService {
 
     @Transactional
     public void createPost(String title, String content, long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("유저를 찾을 수 없습니다.",null)
+        );
+
         Post post = Post.builder()
                 .categoryId(1L) // 카테고리까지는 무리여서 일단 그냥 1로 더미데이터로 생성
-                .userId(userId)
+                .user(user)
                 .title(title)
                 .content(content)
                 .build();
@@ -61,8 +65,7 @@ public class PostService {
 
         return posts.stream()
                 .map(post -> {
-                    User user = userRepository.findById(post.getUserId())
-                            .orElseThrow(() -> new NotFoundException("유저를 찾을 수 없습니다.", null));
+                    User user = post.getUser();
                     return PostListResponse.from(post, user);
                 })
                 .collect(Collectors.toList());
@@ -74,8 +77,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
 
-        User user = userRepository.findById(post.getUserId())
-                .orElseThrow(() -> new NotFoundException("작성자 정보를 찾을 수 없습니다.", null));
+        User user = post.getUser();
 
         long likeCount = postLikeRepository.countByPostId(postId);
         long commentCount = commentRepository.countByCommentId(postId);
@@ -88,7 +90,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
 
-        if (!post.getUserId().equals(loginUserId)) throw new ForbiddenException("사용자 권한이 없습니다.", null);
+        if (!post.getUser().getUserId().equals(loginUserId)) throw new ForbiddenException("사용자 권한이 없습니다.", null);
 
         post.update(title, content);
     }
@@ -98,7 +100,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
 
-        if (!post.getUserId().equals(loginUserId)) throw new ForbiddenException("사용자 권한이 없습니다.", null);
+        if (!post.getUser().getUserId().equals(loginUserId)) throw new ForbiddenException("사용자 권한이 없습니다.", null);
 
         postRepository.delete(post);
     }
