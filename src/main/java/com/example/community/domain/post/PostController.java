@@ -55,10 +55,10 @@ public class PostController {
         String token = jwtProvider.extractTokenFromRequest(request);
         Long userId = jwtProvider.validateToken(token);
 
-        postService.createPost(body.get("title"), body.get("content"), userId);
+        PostResponse postResponse = postService.createPost(body.get("title"), body.get("content"), userId);
 
         response.put("message", "post_created");
-        response.put("data", null);
+        response.put("data", postResponse);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

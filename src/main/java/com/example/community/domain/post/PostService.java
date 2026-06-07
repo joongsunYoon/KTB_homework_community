@@ -45,7 +45,7 @@ public class PostService {
     }
 
     @Transactional
-    public void createPost(String title, String content, long userId) {
+    public PostResponse createPost(String title, String content, long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("유저를 찾을 수 없습니다.",null)
         );
@@ -59,7 +59,7 @@ public class PostService {
 
         PostInfo postInfo = new PostInfo(post);
         postInfoRepository.save(postInfo);
-        postRepository.save(post);
+        return PostResponse.from(postRepository.save(post),user,postInfo);
     }
 
     public List<PostListResponse> getPostList(int cursor, int size) {
