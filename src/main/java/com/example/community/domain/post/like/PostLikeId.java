@@ -1,11 +1,11 @@
 package com.example.community.domain.post.like;
 import java.io.Serializable;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 public class PostLikeId implements Serializable {
     private Long postId;

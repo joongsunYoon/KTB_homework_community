@@ -1,10 +1,13 @@
 package com.example.community.domain.post.like;
 
+import com.example.community.domain.post.Post;
+import com.example.community.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+
 import java.sql.Timestamp;
 
 
@@ -16,20 +19,22 @@ import java.sql.Timestamp;
 public class PostLike {
 
     @Id
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Id
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
     @Builder
-    public PostLike(Long postId, Long userId) {
-        this.postId = postId;
-        this.userId = userId;
+    public PostLike(Post post, User user) {
+        this.post = post;
+        this.user = user;
     }
 }
