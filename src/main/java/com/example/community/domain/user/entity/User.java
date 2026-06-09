@@ -51,4 +51,14 @@ public class User{
     public void updateProfileImage(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    // todo: Hash로 바꿔야함.
+    public void updatePassword(String password) {
+        this.passwordHash = password;
+    }
+
 }

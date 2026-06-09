@@ -53,6 +53,9 @@ public class UserService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
+        if(user.getNickname() != null) user.updateNickname(nickname);
+        if(user.getPasswordHash() == null) user.updatePassword(passwordCheck);
+        userRepository.save(user);
 
     }
 
