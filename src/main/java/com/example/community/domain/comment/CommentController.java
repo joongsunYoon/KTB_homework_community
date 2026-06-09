@@ -34,7 +34,7 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> createComment(
-            @PathVariable int postId,
+            @PathVariable long postId,
             @RequestBody Map<String, String> body,
             @AuthenticationPrincipal Long userId
     ) {
@@ -49,8 +49,8 @@ public class CommentController {
 
     @PutMapping("/{commentId}")
     public ResponseEntity<Map<String, Object>> updateComment(
-            @PathVariable int postId,
-            @PathVariable int commentId,
+            @PathVariable long postId,
+            @PathVariable long commentId,
             @RequestBody Map<String, String> body,
             @AuthenticationPrincipal Long userId
     ) {
@@ -65,8 +65,8 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Map<String, Object>> deleteComment(
-            @PathVariable int postId,
-            @PathVariable int commentId,
+            @PathVariable long postId,
+            @PathVariable long commentId,
             @AuthenticationPrincipal Long userId
     ) {
 

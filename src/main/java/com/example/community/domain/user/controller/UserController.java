@@ -1,11 +1,9 @@
 package com.example.community.domain.user.controller;
 
-import com.example.community.domain.user.entity.User;
-import com.example.community.global.security.JwtProvider;
 import com.example.community.domain.user.dto.CreateRequestDto;
+import com.example.community.domain.user.entity.User;
 import com.example.community.domain.user.service.UserService;
 import com.example.community.global.exception.ForbiddenException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,7 +26,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<Map<String, Object>> search(
-            @PathVariable int userId,
+            @PathVariable long userId,
             @AuthenticationPrincipal Long loginUserId
     ) {
         Map<String, Object> response = new HashMap<>();
@@ -58,7 +56,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public ResponseEntity<Map<String, Object>> update(
-            @PathVariable int userId,
+            @PathVariable long userId,
             @RequestBody Map<String, String> body,
             @AuthenticationPrincipal Long loginUserId
     ) {
@@ -78,7 +76,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Map<String, Object>> delete(
-            @PathVariable int userId,
+            @PathVariable long userId,
             @AuthenticationPrincipal Long loginUserId
     ) {
 

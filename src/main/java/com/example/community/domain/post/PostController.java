@@ -58,7 +58,7 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     public ResponseEntity<Map<String, Object>> update(
-            @PathVariable int postId,
+            @PathVariable long postId,
             @RequestBody Map<String, String> body,
             @AuthenticationPrincipal Long userId
     ) {
@@ -73,7 +73,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> delete(
-            @PathVariable int postId,
+            @PathVariable long postId,
             @AuthenticationPrincipal Long userId
     ) {
         postService.remove(postId, userId);

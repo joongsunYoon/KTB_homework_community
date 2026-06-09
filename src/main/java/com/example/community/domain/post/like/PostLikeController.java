@@ -20,7 +20,7 @@ public class PostLikeController {
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> addLike(
-            @PathVariable int postId,
+            @PathVariable long postId,
             @AuthenticationPrincipal Long userId
     ) {
         postLikeService.addLike(postId, userId);
