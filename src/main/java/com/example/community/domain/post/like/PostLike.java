@@ -26,14 +26,20 @@ public class PostLike {
     @Column(name = "user_id", columnDefinition = "INT UNSIGNED")
     private Long userId;
 
-    @MapsId("postId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", insertable = false, updatable = false, columnDefinition = "INT UNSIGNED")
+    @JoinColumn(
+            name = "post_id",
+            insertable = false,
+            updatable = false
+    )
     private Post post;
 
-    @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false, columnDefinition = "INT UNSIGNED")
+    @JoinColumn(
+            name = "user_id",
+            insertable = false,
+            updatable = false
+    )
     private User user;
 
     @CreationTimestamp
@@ -44,5 +50,7 @@ public class PostLike {
     public PostLike(Post post, User user) {
         this.post = post;
         this.user = user;
+        this.postId = post.getPostId();
+        this.userId = user.getUserId();
     }
 }
