@@ -1,9 +1,7 @@
 package com.example.community.domain.post;
 
-import com.example.community.global.security.JwtProvider;
 import com.example.community.domain.post.dto.PostListResponse;
 import com.example.community.domain.post.dto.PostResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

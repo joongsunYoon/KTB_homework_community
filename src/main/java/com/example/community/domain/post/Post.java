@@ -26,7 +26,7 @@ public class Post {
     private Long categoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE)

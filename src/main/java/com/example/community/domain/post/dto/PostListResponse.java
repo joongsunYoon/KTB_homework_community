@@ -13,12 +13,17 @@ public record PostListResponse(
 ) {
 
     public static PostListResponse from(Post post, User user) {
+        Long userId = null;
+
+        if(user != null){
+            userId = user.getUserId();
+        }
         return new PostListResponse(
                 post.getPostId(),
                 post.getTitle(),
                 post.getPostImageUrl() != null ? post.getPostImageUrl() : "image-server/post/image",
-                user.getNickname(),
-                user.getProfileImageUrl()
+                userId != null ? user.getNickname() : "알 수 없는 사용자",
+                userId != null ? user.getProfileImageUrl() : "image-server/post/image"
         );
     }
 }

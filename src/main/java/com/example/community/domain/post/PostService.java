@@ -63,9 +63,9 @@ public class PostService {
     }
 
     public List<PostListResponse> getPostList(int cursor, int size) {
-        int currentCursor = (cursor == 0) ? Integer.MAX_VALUE : cursor;
+        long currentCursor = (cursor == 0) ? Integer.MAX_VALUE : cursor;
 
-        List<Post> posts = postRepository.findTopPostsByCursor(currentCursor, (Pageable) PageRequest.of(0, size));
+        List<Post> posts = postRepository.findTopPostsByCursor(currentCursor, PageRequest.of(0, size));
 
         return posts.stream()
                 .map(post -> {

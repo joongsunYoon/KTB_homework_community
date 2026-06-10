@@ -19,6 +19,13 @@ public record PostResponse(
         String updatedAt
 ) {
     public static PostResponse from(Post post, User user , PostInfo postInfo) {
+
+        Long userId = null;
+
+        if(user != null){
+            userId = user.getUserId();
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat("y-M-d H:m:s");
 
         return new PostResponse(
@@ -26,8 +33,8 @@ public record PostResponse(
                 post.getTitle(),
                 post.getContent(),
                 post.getPostImageUrl() != null ? post.getPostImageUrl() : "image-server/post/image",
-                user.getNickname(),
-                user.getProfileImageUrl(),
+                userId != null ? user.getNickname() : "알 수 없는 사용자",
+                userId != null ? user.getProfileImageUrl() : "image-server/post/image",
                 PostInfoResponse.from(postInfo),
                 post.getCreatedAt() != null ? sdf.format(post.getCreatedAt()) : null,
                 post.getUpdatedAt() != null ? sdf.format(post.getUpdatedAt()) : null
