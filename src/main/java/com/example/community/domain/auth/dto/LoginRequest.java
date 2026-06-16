@@ -1,4 +1,4 @@
-package com.example.community.domain.auth;
+package com.example.community.domain.auth.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

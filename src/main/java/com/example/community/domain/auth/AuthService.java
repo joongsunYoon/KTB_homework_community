@@ -1,5 +1,6 @@
 package com.example.community.domain.auth;
 
+import com.example.community.domain.auth.dto.LoginResponse;
 import com.example.community.domain.auth.dto.TokenResponse;
 import com.example.community.domain.user.entity.User;
 import com.example.community.domain.user.repository.UserRepository;
@@ -16,6 +17,18 @@ public class AuthService {
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
+
+
+    public TokenResponse login(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
+        if (!user.getPasswordHash().equals(password)) throw new IllegalArgumentException("invalid_request");
+
+        String accessToken = jwtProvider.generateAccessToken(user);
+        String refreshToken = jwtProvider.generateRefreshToken(user);
+
+        return new TokenResponse(accessToken,refreshToken);
+    }
 
     public TokenResponse refresh(String refreshToken) {
 

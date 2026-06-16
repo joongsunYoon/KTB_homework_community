@@ -30,22 +30,12 @@ public class UserService {
     // todo: 비밀번호를 plain text로 저장하고 있음. papper + salt 형식으로 수정해야함.
     @Transactional
     public void create(CreateRequestDto dto) {
-        if (!dto.password().equals(dto.passwordCheck())) throw new IllegalArgumentException("invalid_request");
-        if (userRepository.findByEmail(dto.email()).isPresent()) throw new IllegalArgumentException("invalid_request");
-
         User user = User.builder()
                 .email(dto.email())
                 .passwordHash(dto.password())
                 .nickname(dto.nickname())
                 .build();
         userRepository.save(user);
-    }
-
-    public User login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
-        if (!user.getPasswordHash().equals(password)) throw new IllegalArgumentException("invalid_request");
-        return user;
     }
 
     @Transactional
