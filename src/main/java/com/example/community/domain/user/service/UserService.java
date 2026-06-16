@@ -66,6 +66,14 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public boolean isEmailAvailable(String email) {
+        return !userRepository.existsByEmail(email);
+    }
+
+    public boolean isNicknameAvailable(String nickname) {
+        return !userRepository.existsByNickname(nickname);
+    }
+
     @Transactional
     public void createOrUpdateProfileImage(long userId, MultipartFile file) {
         User user = userRepository.findById(userId)

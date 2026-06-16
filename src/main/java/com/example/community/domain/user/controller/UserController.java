@@ -4,6 +4,7 @@ import com.example.community.domain.user.dto.CreateRequestDto;
 import com.example.community.domain.user.entity.User;
 import com.example.community.domain.user.service.UserService;
 import com.example.community.global.exception.ForbiddenException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,16 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(
-            UserService userService
-    ) {
-        this.userService = userService;
-    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<Map<String, Object>> search(
@@ -87,4 +83,29 @@ public class UserController {
         userService.remove(userId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/email/check")
+    public ResponseEntity<Void> checkEmail(
+            @RequestParam String email
+    ) {
+
+        if (userService.isEmailAvailable(email)) {
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
+    @GetMapping("/nickname/check")
+    public ResponseEntity<Void> checkNickname(
+            @RequestParam String nickname
+    ) {
+
+        if (userService.isNicknameAvailable(nickname)) {
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
 }
