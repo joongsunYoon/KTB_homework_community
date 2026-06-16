@@ -31,7 +31,9 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/api/auth"
+            "/api/auth",
+            "/api/users/email/check",
+            "/api/users/nickname/check"
     };
 
     @Bean
@@ -63,31 +65,31 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-                http
-                .cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.setCharacterEncoding("UTF-8");
+        http
+        .cors(Customizer.withDefaults())
+        .csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                .anyRequest().authenticated()
+        )
+        .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setCharacterEncoding("UTF-8");
 
-                            ErrorResponse apiResponse = new ErrorResponse("UNAUTHORIZED" , null);
+                    ErrorResponse apiResponse = new ErrorResponse("UNAUTHORIZED" , null);
 
-                            PrintWriter writer = response.getWriter();
-                            writer.write(objectMapper.writeValueAsString(apiResponse));
-                            writer.flush();
-                        })
-                )
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
+                    PrintWriter writer = response.getWriter();
+                    writer.write(objectMapper.writeValueAsString(apiResponse));
+                    writer.flush();
+                })
+        )
+        .addFilterBefore(
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class
+        );
         return http.build();
     }
 }

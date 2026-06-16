@@ -19,31 +19,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
 
+    //OPTIONS method만 허가
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-
-        String uri = request.getRequestURI();
-        String method = request.getMethod();
-
-        if (uri.endsWith("/auth") && method.equals("POST")) {
-            return true;
-        }
-
-        if (uri.endsWith("/users") && method.equals("POST")) {
-            return true;
-        }
-
-        if (uri.startsWith("/api/posts") && method.equals("GET")) {
-            return true;
-        }
-
-        if("OPTIONS".equalsIgnoreCase(request.getMethod())){
-            return true;
-        }
-
-        return false;
+        return "OPTIONS".equalsIgnoreCase(request.getMethod());
     }
 
+    //null값이 들어와도 인증/인가 처리
+    //JWT의 유효성만 확인
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -51,9 +34,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
+        if(request.getHeader("Authorization") == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
+
             String token = jwtProvider.extractTokenFromRequest(request);
             long userId = jwtProvider.validateToken(token);
+
 
             var authentication = new UsernamePasswordAuthenticationToken(userId, null, List.of());
             SecurityContextHolder.getContext().setAuthentication(authentication);
