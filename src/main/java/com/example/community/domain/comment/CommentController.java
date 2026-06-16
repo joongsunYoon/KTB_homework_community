@@ -70,11 +70,8 @@ public class CommentController {
             @AuthenticationPrincipal Long userId
     ) {
 
-        Map<String, Object> response = new HashMap<>();
         commentService.removeComment(commentId, userId);
 
-        response.put("message", "comment_deleted");
-        response.put("data", null);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.noContent().build();
     }
 }

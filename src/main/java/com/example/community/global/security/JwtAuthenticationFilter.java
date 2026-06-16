@@ -20,6 +20,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
+
+        if (uri.endsWith("/auth") && method.equals("POST")) {
+            return true;
+        }
+
+        if (uri.endsWith("/users") && method.equals("POST")) {
+            return true;
+        }
+
+        if (uri.startsWith("/api/posts") && method.equals("GET")) {
+            return true;
+        }
+
+        if("OPTIONS".equalsIgnoreCase(request.getMethod())){
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,

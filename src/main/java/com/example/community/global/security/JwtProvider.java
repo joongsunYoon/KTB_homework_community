@@ -1,7 +1,6 @@
 package com.example.community.global.security;
 
 import com.example.community.domain.user.entity.User;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.Date;
@@ -20,13 +19,6 @@ public class JwtProvider {
     private long accessTtl;
     @Value("${jwt.refresh-ttl}")
     private long refreshTtl;
-
-    private static final String[] COOKIE_NAMES = {
-            "__Host-access_token",
-            "__Host-refresh_token",
-            "access_token",
-            "refresh_token"
-    };
 
     public String generateAccessToken(User user) {
         Instant now = Instant.now();
@@ -68,21 +60,6 @@ public class JwtProvider {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && !authHeader.isBlank()) {
             return authHeader.substring(7).trim();
-        }
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                String name = c.getName();
-                for (String candidate : COOKIE_NAMES) {
-                    if (candidate.equalsIgnoreCase(name)) {
-                        String value = c.getValue();
-                        if (value != null && !value.isBlank()) {
-                            return value.trim();
-                        }
-                    }
-                }
-            }
         }
 
         throw new RuntimeException("토큰이 유효하지 않습니다.");
