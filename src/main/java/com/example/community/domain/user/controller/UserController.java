@@ -1,8 +1,10 @@
 package com.example.community.domain.user.controller;
 
 import com.example.community.domain.user.dto.CreateRequestDto;
+import com.example.community.domain.user.dto.MyInfoResponse;
 import com.example.community.domain.user.entity.User;
 import com.example.community.domain.user.service.UserService;
+import com.example.community.global.ApiResponse;
 import com.example.community.global.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,14 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<MyInfoResponse>> getMyInfo(
+            @AuthenticationPrincipal Long loginUserId
+    ) {
+        User user = userService.findById(loginUserId);
+        return ResponseEntity.ok(ApiResponse.success(MyInfoResponse.from(user)));
+    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<Map<String, Object>> search(
