@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.print.Pageable;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,11 +65,11 @@ public class PostService {
         long currentCursor = (cursor == 0) ? Integer.MAX_VALUE : cursor;
 
         List<Post> posts = postRepository.findTopPostsByCursor(currentCursor, PageRequest.of(0, size));
-
         return posts.stream()
                 .map(post -> {
                     User user = post.getUser();
-                    return PostListResponse.from(post, user);
+                    PostInfo postInfo = post.getPostInfo();
+                    return PostListResponse.from(post, user , postInfo);
                 })
                 .collect(Collectors.toList());
     }
