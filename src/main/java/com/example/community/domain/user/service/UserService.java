@@ -1,11 +1,12 @@
 package com.example.community.domain.user.service;
 
 import com.example.community.domain.user.dto.CreateRequestDto;
-import com.example.community.domain.user.repository.UserRepository;
 import com.example.community.domain.user.entity.User;
+import com.example.community.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,8 +66,7 @@ public class UserService {
 
     @Transactional
     public void remove(long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
+        User user = findById(userId);
         userRepository.delete(user);
     }
 
@@ -80,8 +80,7 @@ public class UserService {
 
     @Transactional
     public void createOrUpdateProfileImage(long userId, MultipartFile file) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
+        User user = findById(userId);
         try {
             File dir = new File(UPLOAD_DIR);
             if (!dir.exists()) dir.mkdirs();
@@ -98,8 +97,7 @@ public class UserService {
 
     @Transactional
     public void removeProfileImage(long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
+        User user = findById(userId);
         user.updateProfileImage(null);
     }
 }
