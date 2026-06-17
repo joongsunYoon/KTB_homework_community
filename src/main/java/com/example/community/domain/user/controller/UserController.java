@@ -68,7 +68,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success());
     }
 
-    @PatchMapping("/{userId}/password")
+    @PutMapping("/{userId}/password")
     public ResponseEntity<ApiResponse<Void>> updatePassword(
             @PathVariable long userId,
             @RequestBody UpdatePasswordRequest request,
