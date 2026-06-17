@@ -2,6 +2,8 @@ package com.example.community.domain.user.controller;
 
 import com.example.community.domain.user.dto.CreateRequestDto;
 import com.example.community.domain.user.dto.MyInfoResponse;
+import com.example.community.domain.user.dto.UpdatePasswordRequest;
+import com.example.community.domain.user.dto.UpdateProfileRequest;
 import com.example.community.domain.user.entity.User;
 import com.example.community.domain.user.service.UserService;
 import com.example.community.global.ApiResponse;
@@ -31,23 +33,16 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Map<String, Object>> search(
+    public ResponseEntity<ApiResponse<MyInfoResponse>> search(
             @PathVariable long userId,
             @AuthenticationPrincipal Long loginUserId
     ) {
-        Map<String, Object> response = new HashMap<>();
-
         if (loginUserId != userId) {
-            response.put("message", "사용자 권한이 없습니다.");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            throw new ForbiddenException("사용자 권한이 없습니다.", null);
         }
 
         User userData = userService.findById(userId);
-
-        response.put("message", "user_found");
-        response.put("data", userData);
-        return ResponseEntity.ok(response);
-
+        return ResponseEntity.ok(ApiResponse.success(MyInfoResponse.from(userData)));
     }
 
     @PostMapping
@@ -57,27 +52,34 @@ public class UserController {
         response.put("message", "user_created");
         response.put("data", null);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<Map<String, Object>> update(
+    public ResponseEntity<ApiResponse<Void>> updateProfile(
             @PathVariable long userId,
-            @RequestBody Map<String, String> body,
+            @RequestBody UpdateProfileRequest request,
             @AuthenticationPrincipal Long loginUserId
     ) {
-        Map<String, Object> response = new HashMap<>();
-
         if (loginUserId != userId) {
-            response.put("message", "사용자 권한이 없습니다.");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            throw new ForbiddenException("사용자 권한이 없습니다.", null);
         }
 
-        userService.update(userId, body.get("nickname"), body.get("passwordCheck"));
-        response.put("message", "user_updated");
-        response.put("data", null);
-        return ResponseEntity.ok(response);
+        userService.updateProfile(userId, request.nickname(), request.profileImageUrl());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success());
+    }
 
+    @PatchMapping("/{userId}/password")
+    public ResponseEntity<ApiResponse<Void>> updatePassword(
+            @PathVariable long userId,
+            @RequestBody UpdatePasswordRequest request,
+            @AuthenticationPrincipal Long loginUserId
+    ) {
+        if (loginUserId != userId) {
+            throw new ForbiddenException("사용자 권한이 없습니다.", null);
+        }
+
+        userService.updatePassword(userId, request.password());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success());
     }
 
     @DeleteMapping("/{userId}")
@@ -85,7 +87,6 @@ public class UserController {
             @PathVariable long userId,
             @AuthenticationPrincipal Long loginUserId
     ) {
-
         if (loginUserId != userId) {
             throw new ForbiddenException("사용자 권한이 없습니다.", null);
         }
@@ -95,10 +96,7 @@ public class UserController {
     }
 
     @GetMapping("/email/check")
-    public ResponseEntity<Void> checkEmail(
-            @RequestParam String email
-    ) {
-
+    public ResponseEntity<Void> checkEmail(@RequestParam String email) {
         if (userService.isEmailAvailable(email)) {
             return ResponseEntity.ok().build();
         }
@@ -107,15 +105,11 @@ public class UserController {
     }
 
     @GetMapping("/nickname/check")
-    public ResponseEntity<Void> checkNickname(
-            @RequestParam String nickname
-    ) {
-
+    public ResponseEntity<Void> checkNickname(@RequestParam String nickname) {
         if (userService.isNicknameAvailable(nickname)) {
             return ResponseEntity.ok().build();
         }
 
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
-
 }

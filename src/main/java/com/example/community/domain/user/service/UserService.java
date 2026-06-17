@@ -39,14 +39,28 @@ public class UserService {
     }
 
     @Transactional
-    public void update(long userId, String nickname, String passwordCheck) {
+    public void updateProfile(long userId, String nickname, String profileImageUrl) {
+        User user = findById(userId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("invalid_request"));
-        if(user.getNickname() != null) user.updateNickname(nickname);
-        if(user.getPasswordHash() == null) user.updatePassword(passwordCheck);
+        if (nickname == null || nickname.trim().isEmpty()) {
+            throw new IllegalArgumentException("invalid_request");
+        }
+
+        user.updateNickname(nickname);
+        user.updateProfileImage(profileImageUrl);
         userRepository.save(user);
+    }
 
+    @Transactional
+    public void updatePassword(long userId, String password) {
+        User user = findById(userId);
+
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("invalid_request");
+        }
+
+        user.updatePassword(password);
+        userRepository.save(user);
     }
 
     @Transactional
