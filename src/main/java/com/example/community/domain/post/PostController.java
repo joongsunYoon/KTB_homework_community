@@ -1,5 +1,6 @@
 package com.example.community.domain.post;
 
+import com.example.community.domain.post.dto.CreatePostRequest;
 import com.example.community.domain.post.dto.PostListResponse;
 import com.example.community.domain.post.dto.PostResponse;
 import org.springframework.http.HttpStatus;
@@ -43,15 +44,20 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(
-            @RequestBody Map<String, String> body,
+            @RequestBody CreatePostRequest request,
             @AuthenticationPrincipal Long userId
     ) {
-        Map<String, Object> response = new HashMap<>();
-        PostResponse postResponse = postService.createPost(body.get("title"), body.get("content"), userId);
+        PostResponse postResponse = postService.createPost(
+                request.title(),
+                request.content(),
+                request.imageUrls(),
+                userId
+        );
 
-        response.put("message", "post_created");
-        response.put("data", postResponse);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message", "post_created",
+                "data", postResponse
+        ));
     }
 
     @PatchMapping("/{postId}")
