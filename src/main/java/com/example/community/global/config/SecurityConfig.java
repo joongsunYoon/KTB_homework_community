@@ -33,7 +33,8 @@ public class SecurityConfig {
     private static final String[] PUBLIC_ENDPOINTS = {
             "/api/auth",
             "/api/users/email/check",
-            "/api/users/nickname/check"
+            "/api/users/nickname/check",
+            "/image-server/**"
     };
 
     @Bean
@@ -42,7 +43,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "http://43.201.101.7:3000"
         ));
 
         config.setAllowedMethods(List.of(

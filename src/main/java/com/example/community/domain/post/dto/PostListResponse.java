@@ -13,14 +13,18 @@ public record PostListResponse(
         String profileImage,
         PostInfoResponse postInfoResponse
 ) {
-
-    public static PostListResponse from(Post post, User user, PostInfo postInfo) {
+    public static PostListResponse from(
+            Post post,
+            User user,
+            PostInfo postInfo,
+            String postImageUrl
+    ) {
         return new PostListResponse(
                 post.getPostId(),
                 post.getTitle(),
-                post.getPostImageUrl() != null ? post.getPostImageUrl() : "image-server/post/image",
+                postImageUrl,
                 user != null ? user.getNickname() : "알 수 없는 사용자",
-                user != null ? user.getProfileImageUrl() : "image-server/post/image",
+                user != null ? user.getProfileImageUrl() : null,
                 PostInfoResponse.from(postInfo)
         );
     }

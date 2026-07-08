@@ -1,6 +1,10 @@
 package com.example.community.domain.post;
 
 import com.example.community.domain.comment.CommentRepository;
+import com.example.community.domain.image.Image;
+import com.example.community.domain.image.ImageRepository;
+import com.example.community.domain.image.ImageService;
+import com.example.community.domain.image.ImageType;
 import com.example.community.domain.post.dto.PostListResponse;
 import com.example.community.domain.post.dto.PostResponse;
 import com.example.community.domain.post.info.PostInfo;
@@ -13,40 +17,46 @@ import com.example.community.global.exception.NotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 public class PostService {
 
-    private final String POST_UPLOAD_DIR = System.getProperty("user.dir") + "/upload-posts/";
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final PostInfoRepository postInfoRepository;
+    private final ImageRepository imageRepository;
+    private final ImageService imageService;
 
     public PostService(
             PostRepository postRepository,
             UserRepository userRepository,
             PostLikeRepository postLikeRepository,
             CommentRepository commentRepository,
-            PostInfoRepository postInfoRepository
+            PostInfoRepository postInfoRepository,
+            ImageRepository imageRepository,
+            ImageService imageService
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.postInfoRepository = postInfoRepository;
+        this.imageRepository = imageRepository;
+        this.imageService = imageService;
     }
 
     @Transactional
-    public PostResponse createPost(String title, String content, long userId) {
+    public PostResponse createPost(
+            String title,
+            String content,
+            List<String> imageUrls,
+            long userId
+    ) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException("유저를 찾을 수 없습니다.",null)
+                () -> new NotFoundException("유저를 찾을 수 없습니다.", null)
         );
 
         Post post = Post.builder()
@@ -55,30 +65,50 @@ public class PostService {
                 .title(title)
                 .content(content)
                 .build();
+        postRepository.save(post);
 
         PostInfo postInfo = new PostInfo(post);
         postInfoRepository.save(postInfo);
-        return PostResponse.from(postRepository.save(post),user,postInfo);
+
+        List<String> postImageUrls = getPostImageUrls(imageUrls);
+        imageService.createPostImages(post, postImageUrls);
+
+        return PostResponse.from(post, user, postInfo, postImageUrls);
     }
 
     public List<PostListResponse> getPostList(int cursor, int size) {
         long currentCursor = (cursor == 0) ? Integer.MAX_VALUE : cursor;
 
         List<Post> posts = postRepository.findTopPostsByCursor(currentCursor, PageRequest.of(0, size));
+        if (posts.isEmpty()) {
+            return List.of();
+        }
+
+        List<Long> postIds = posts.stream()
+                .map(Post::getPostId)
+                .toList();
+        Map<Long, String> thumbnailImages = imageRepository
+                .findPostThumbnails(postIds, ImageType.POST)
+                .stream()
+                .collect(Collectors.toMap(
+                        image -> image.getPost().getPostId(),
+                        Image::getUrl
+                ));
+
         return posts.stream()
-                .map(post -> {
-                    User user = post.getUser();
-                    PostInfo postInfo = post.getPostInfo();
-                    return PostListResponse.from(post, user , postInfo);
-                })
-                .collect(Collectors.toList());
+                .map(post -> PostListResponse.from(
+                        post,
+                        post.getUser(),
+                        post.getPostInfo(),
+                        thumbnailImages.get(post.getPostId())
+                ))
+                .toList();
     }
 
     // Post + PostInfo
     // todo: postInfo 조회수 증가 로직 비동기화 해야함.
     @Transactional
     public PostResponse getPostDetail(Long postId) {
-
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다.", null));
 
@@ -87,7 +117,11 @@ public class PostService {
         postInfo.increaseViewCount();
         postInfoRepository.save(postInfo);
 
-        return PostResponse.from(post, user, postInfo);
+        List<String> postImages = post.getImages().stream()
+                .map(Image::getUrl)
+                .toList();
+
+        return PostResponse.from(post, user, postInfo , postImages);
     }
 
     @Transactional
@@ -101,7 +135,6 @@ public class PostService {
         postRepository.save(post);
     }
 
-    //Post + PostInfo
     @Transactional
     public void remove(long postId, long loginUserId) {
         Post post = postRepository.findById(postId)
@@ -111,21 +144,14 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    @Transactional
-    public void uploadPostImage(long postId, MultipartFile file) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException("해당 내용을 찾을 수 없습니다.", null));
-        try {
-            File dir = new File(POST_UPLOAD_DIR);
-            if (!dir.exists()) dir.mkdirs();
-
-            String fileName = "post_" + postId + "_post_image_" + file.getOriginalFilename();
-            Path filePath = Paths.get(POST_UPLOAD_DIR + fileName);
-            Files.write(filePath, file.getBytes());
-
-            post.updatePostImageUrl("image-server/posts/" + postId + "/post-image");
-        } catch (Exception e) {
-            throw new RuntimeException("internal_server_error");
+    private List<String> getPostImageUrls(List<String> imageUrls) {
+        if (imageUrls == null) {
+            return List.of();
         }
+
+        return imageUrls.stream()
+                .filter(url -> url != null && !url.isBlank())
+                .distinct()
+                .toList();
     }
 }

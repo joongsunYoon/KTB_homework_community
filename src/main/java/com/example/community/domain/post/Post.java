@@ -1,5 +1,6 @@
 package com.example.community.domain.post;
 
+import com.example.community.domain.image.Image;
 import com.example.community.domain.post.info.PostInfo;
 import com.example.community.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -10,6 +11,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "post")
@@ -38,8 +41,9 @@ public class Post {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "post_image_url")
-    private String postImageUrl;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OrderBy("postOrder ASC")
+    private List<Image> images = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -50,12 +54,11 @@ public class Post {
     private Timestamp updatedAt;
 
     @Builder
-    public Post(Long categoryId, User user, String title, String content, String postImageUrl) {
+    public Post(Long categoryId, User user, String title, String content) {
         this.categoryId = categoryId;
         this.user  = user;
         this.title = title;
         this.content = content;
-        this.postImageUrl = postImageUrl;
     }
 
     public void update(String title, String content) {
@@ -66,7 +69,10 @@ public class Post {
         this.content = content;
     }
 
-    public void updatePostImageUrl(String postImageUrl) {
-        this.postImageUrl = postImageUrl;
+    public String getPostImageUrl() {
+        if (images == null || images.isEmpty()) {
+            return null;
+        }
+        return images.get(0).getUrl();
     }
 }

@@ -1,27 +1,20 @@
 package com.example.community.domain.user.service;
 
+import com.example.community.domain.image.ImageService;
 import com.example.community.domain.user.dto.CreateRequestDto;
 import com.example.community.domain.user.entity.User;
 import com.example.community.domain.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final String UPLOAD_DIR = System.getProperty("user.dir") + "/upload-images/";
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final ImageService imageService;
 
     public User findById(long userId) {
         return userRepository.findById(userId)
@@ -48,7 +41,11 @@ public class UserService {
         }
 
         user.updateNickname(nickname);
-        user.updateProfileImage(profileImageUrl);
+        if (profileImageUrl == null) {
+            user.updateProfileImage(null);
+        } else {
+            user.updateProfileImage(imageService.getOrCreateProfileImage(profileImageUrl));
+        }
         userRepository.save(user);
     }
 
@@ -76,28 +73,5 @@ public class UserService {
 
     public boolean isNicknameAvailable(String nickname) {
         return !userRepository.existsByNickname(nickname);
-    }
-
-    @Transactional
-    public void createOrUpdateProfileImage(long userId, MultipartFile file) {
-        User user = findById(userId);
-        try {
-            File dir = new File(UPLOAD_DIR);
-            if (!dir.exists()) dir.mkdirs();
-
-            String fileName = "user_" + userId + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get(UPLOAD_DIR + fileName);
-            Files.write(filePath, file.getBytes());
-
-            user.updateProfileImage("image-server/users/" + userId + "/profiles-image");
-        } catch (Exception e) {
-            throw new RuntimeException("internal_server_error");
-        }
-    }
-
-    @Transactional
-    public void removeProfileImage(long userId) {
-        User user = findById(userId);
-        user.updateProfileImage(null);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.community.domain.user.entity;
 
+import com.example.community.domain.image.Image;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,8 +29,9 @@ public class User{
     @Column(nullable = false, unique = true, length = 31)
     private String nickname;
 
-    @Column(name = "profile_image_url")
-    private String profileImageUrl;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_image_id")
+    private Image profileImage;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -40,16 +42,20 @@ public class User{
     private Timestamp updatedAt;
 
     @Builder
-    public User(Long userId, String email, String passwordHash, String nickname, String profileImageUrl) {
+    public User(Long userId, String email, String passwordHash, String nickname, Image profileImage) {
         this.userId = userId;
         this.email = email;
         this.passwordHash = passwordHash;
         this.nickname = nickname;
-        this.profileImageUrl = profileImageUrl;
+        this.profileImage = profileImage;
     }
 
-    public void updateProfileImage(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
+    public String getProfileImageUrl() {
+        return profileImage == null ? null : profileImage.getUrl();
+    }
+
+    public void updateProfileImage(Image profileImage) {
+        this.profileImage = profileImage;
     }
 
     public void updateNickname(String nickname) {

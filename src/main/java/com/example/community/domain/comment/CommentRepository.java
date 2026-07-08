@@ -9,10 +9,11 @@ import java.util.Map;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c.commentId as commentId, c.content as content, " +
-            "u.nickname as nickname, u.profileImageUrl as profileImage, " +
+            "u.nickname as nickname, pi.url as profileImage, " +
             "c.createdAt as createdAt, c.updatedAt as updatedAt " +
             "FROM Comment c " +
             "JOIN c.user u " +
+            "LEFT JOIN u.profileImage pi " +
             "WHERE c.postId = :postId " +
             "ORDER BY c.commentId ASC")
     List<Map<String, Object>> findAllByPostId(@Param("postId") long postId);
