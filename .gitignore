@@ -29,6 +29,9 @@ out/
 upload-posts/
 upload-images/
 
+# Local environment variables
+.env
+
 
 ### NetBeans ###
 /nbproject/private/
