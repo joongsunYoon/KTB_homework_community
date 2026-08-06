@@ -35,7 +35,8 @@ public class SecurityConfig {
             "/api/users/email/check",
             "/api/users/nickname/check",
             "/image-server/**",
-            "/actuator/health/**"
+            "/actuator/health/**",
+            "/actuator/prometheus"
     };
 
     @Bean
