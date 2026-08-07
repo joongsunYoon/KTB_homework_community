@@ -46,7 +46,7 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "http://43.201.101.7:3000"
+                "https://pappus.cloud"
         ));
 
         config.setAllowedMethods(List.of(
